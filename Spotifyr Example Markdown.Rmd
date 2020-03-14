@@ -1,0 +1,22 @@
+---
+title: "Exploring Spotifyr"
+author: "Ben Chittick"
+date: "3/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+library(spotifyr)
+library(tidy)
+
+setwd("~/Spotify Side Project")
+
+### Spotify Creds
+Sys.setenv(SPOTIFY_CLIENT_ID = 'b665cb52a2e64fbaad682eb43fbb203c',
+           SPOTIFY_CLIENT_SECRET = '83d0a0f785ff45adbf80668efad921f5')
+```
+
+
