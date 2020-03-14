@@ -2,7 +2,11 @@
 # Spotify Example
 ###################################################
 library(spotifyr)
-library(tidy)
+library(devtools)
+
+install_github('charlie86/spotifyr')
+
+Sys.getenv("R_LIBS_USER")
 
 setwd("~/Spotify Side Project")
 
@@ -15,8 +19,17 @@ access_token <- get_spotify_access_token()
 ### Data
 beatles <- get_artist_audio_features('the beatles')
 
+my_id <- 'your spotify id'
+my_plists <- get_user_playlists(my_id)
 
-spotifyr::
-  
-  
-sessionInfo()
+my_plists2 <- my_plists %>%
+  filter(playlist_name %in% c('Taiwan Top 50', 'France Top 50', 'Bolivia Top 50', 'U.S. Top 50'))
+
+tracks <- get_playlist_tracks(my_plists2)
+features <- get_track_audio_features(tracks)
+
+
+get_user_playlists()
+
+get_spotify_authorization_code()
+install.packages("spotifyr")

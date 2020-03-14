@@ -8,15 +8,67 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+# adapted from https://rpubs.com/womeimingzi11/how_my_spotify_looks_like
 
+#load packages
 library(spotifyr)
-library(tidy)
-
-setwd("~/Spotify Side Project")
+library(tidyverse)
+library(knitr)
 
 ### Spotify Creds
 Sys.setenv(SPOTIFY_CLIENT_ID = 'b665cb52a2e64fbaad682eb43fbb203c',
            SPOTIFY_CLIENT_SECRET = '83d0a0f785ff45adbf80668efad921f5')
+
+### personal authorization code
+get_spotify_authorization_code()
 ```
 
+
+## Making sure you can pull from spotify api 
+```{r}
+### Data
+beatles <- get_artist_audio_features('the beatles')
+head(beatles)
+```
+
+# Favorite Tracks 
+```{r}
+all_my_fav_tracks <-
+
+  ceiling(get_my_saved_tracks(include_meta_info = TRUE)[['total']] / 50) %>%
+  seq() %>%
+  map(function(x) {
+    get_my_saved_tracks(limit = 50, offset = (x - 1) * 50)
+  }) %>% reduce(rbind)
+
+
+# Let's check the structure of our tracks.
+glimpse(all_my_fav_tracks)
+```
+
+# All Artist from Favorite Tracks 
+```{r}
+artist_from_fav_tracks <-
+  all_my_fav_tracks %>%
+  select(track.artists) %>%
+  reduce(rbind) %>%
+  reduce(rbind) %>%
+  # I don't think we need Urls in further analyses, id (unique mark of artist) and name are selected here.
+  select(id, name)
+```
+
+# Number of Tracks by Artist 
+```{r}
+track_num_artist <-
+  artist_from_fav_tracks %>%
+  count(id, sort = TRUE) %>%
+  left_join(artist_from_fav_tracks, by = 'id',.) %>%
+  unique() %>%
+  select(-id) %>%
+  top_n(20, n) %>%
+  arrange(-n)
+
+track_num_artist  %>%
+  kable()
+```
 
